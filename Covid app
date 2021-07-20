@@ -1,0 +1,653 @@
+                           *Covid App
+                            ____________
+
+
+
+             #Page-1 App.js
+
+
+
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import React ,{Component} from 'react';
+import {Text,View,Image,StyleSheet,TextInput,Button}from 'react-native';
+// import {Component}from 'react';
+// import DropDownPicker from 'react-native-dropdown-picker';
+import splashscreen from './splashscreen'
+import Homescreen from './Homescreen'
+import secondscreen from'./secondscreen'
+const Stack = createStackNavigator();
+
+class App extends Component {
+
+
+  render() {
+    return ( 
+      <NavigationContainer>
+      <Stack.Navigator initialRouteName="splashscreen">
+      <Stack.Screen name="splashscreen" component={splashscreen} 
+      options={{
+                headerShown: false
+            }}/>
+        <Stack.Screen name="Home" component={Homescreen} 
+         options={{
+                headerShown: false
+            }}/>
+        <Stack.Screen  name="Report" component={secondscreen} 
+        options={{
+        headerStyle:{backgroundColor:'#f5f5f5'}
+        }}
+         />
+      </Stack.Navigator>
+    </NavigationContainer>
+    );
+  }}
+     
+export default App;
+
+
+
+
+
+                #Page-2 Index.js
+
+
+
+
+/**
+ * @format
+ */
+
+import {AppRegistry} from 'react-native';
+import App from './App';
+import {name as appName} from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
+
+
+
+
+
+             #Page-3   Splash Screen
+
+
+
+             import React, { Component } from 'react';  
+ import { Platform, StyleSheet, View, Text,  
+ Image, TouchableOpacity, Alert } from 'react-native'; 
+
+ export default class splashscreen extends Component{  
+   constructor(){  
+     super();  
+     this.state={  
+     isVisible : true,  
+    }  
+  }  
+   Hide_Splash_Screen=()=>{  
+    this.setState({   
+      isVisible : false   
+    });  
+  }  
+   
+  componentDidMount(){  
+    // var that = this;  
+    setTimeout(async()=>{
+        this.props.navigation.replace('Home')  
+    //   that.Hide_Splash_Screen(); 
+    },3000);
+   }  
+   
+    render()  
+    {  
+        let Splash_Screen = (  
+             <View style={styles.SplashScreen_RootView}>  
+                 <View style={styles.SplashScreen_ChildView}>  
+                       <Image source={require('./images/stylish.png')}  
+                    style={{width:'100%', height: '100%', resizeMode: 'contain'}} />  
+                </View>  
+             </View> )  
+         return(  
+             <View style = { styles.MainContainer }>   
+                 {  
+                  (this.state.isVisible==true)?Splash_Screen:null  
+                }  
+            </View>  
+              );  
+    }  
+}  
+ const styles = StyleSheet.create(  
+{  
+    MainContainer:  
+    {  
+        flex: 1,  
+        justifyContent: 'center',  
+        alignItems: 'center',  
+        paddingTop: ( Platform.OS === 'android' ) ? 20 : 0  
+    },  
+   
+    SplashScreen_RootView:  
+    {  
+        justifyContent: 'center',  
+        flex:1,  
+        margin:0,  
+        position: 'absolute',  
+        width: '100%',  
+        height: '100%',  
+      },  
+   
+    SplashScreen_ChildView:  
+    {  
+        justifyContent: 'center',  
+        alignItems: 'center',  
+        // backgroundColor: `#f8f8ff`,  
+        flex:1,  
+    },  
+});  
+
+
+
+
+
+
+
+                  #Page-4  Home Screen
+
+
+
+import React from 'react';
+import {Text,View,Image,StyleSheet,TextInput,ScrollView,TouchableOpacity}from 'react-native';
+import {Component}from 'react';
+import DropDownPicker from 'react-native-dropdown-picker';
+
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import moment from 'moment';
+
+
+class Homescreen extends Component {
+constructor(props) {
+  super(props);
+  this.state={
+    result:'Covid Result',
+    patientname:'',
+    sbmtvalidate:false,
+    isVisible: false,
+    chosenDateTime:"",
+    isTimeVisible: false,
+    chosenTime:"",
+    textresult:"",
+    
+};
+
+
+ }
+  fresult=()=>{
+   
+    if (this.state.result=='Positive')
+    {
+      this.setState({textresult:"You have tested positive for Covid-19 contact the nearest health care center for treatment."})
+     }
+       else if(this.state.result=='Negative')
+      {
+      
+       this.setState({textresult:"You have tested negative for Covid -19."})
+       }
+       else
+       {
+        
+        this.setState({textresult:"Unfortunately we could not determine Covid-19 from your specimen, please perform retest."})
+       }
+  
+  }
+  validate(){
+let alph=/^[a-zA-Z ]+$/
+if (this.state.patientname=="" || this.state.result=="" || this.state.chosenTime=="" || this.state.chosenDateTime=="" || this.state.result=="Covid Result")
+{
+  alert("all the fields are required")
+  this.setState({sbmtvalidate:false})
+ }
+  else if(this.state.patientname.trim().length<3)
+  {
+   alert("patientname should contain minimum 3 char")
+   this.setState({sbmtvalidate:false})
+   }
+ else if(!alph.test(this.state.patientname))
+{
+  alert("Patient name accepts alphabets only")
+  this.setState({sbmtvalidate:false})
+}
+else
+{
+ this.setState({sbmtvalidate:true})
+}
+}
+
+
+
+
+
+  showPicker = () => {
+    this.setState({
+    isVisible: true
+    })
+    }
+    handlePicker = (datetime) => {
+    
+    this.setState({
+    isVisible: false,
+    chosenDateTime:moment(datetime).format(' DD/MM/YYYY ')
+    })
+    }
+    hidePicker = () => {
+    this.setState({
+    isVisible: false
+    })
+    }
+
+    showTimePicker = () => {
+      this.setState({
+      isTimeVisible: true
+      })
+      }
+      handleTimePicker = (time) => {
+      
+      this.setState({
+      isTimeVisible: false,
+      chosenTime:moment(time).format('h:mm A ')
+      })
+      }
+      hideTimePicker = () => {
+      this.setState({
+      isTimeVisible: false
+      })
+      }
+
+
+  onclick=()=>{
+    this.validate();
+    this.fresult();
+       setTimeout(()=>{
+        const {patientname,result,textresult,chosenDateTime,chosenTime,sbmtvalidate}=this.state
+        if(sbmtvalidate)
+
+      {
+        this.resetForm()
+       this.props.navigation.navigate  ("Report",{
+        patient:patientname,
+         testresult: result,
+         txtresult: textresult,
+        dateTime: chosenDateTime,
+        Time: chosenTime,
+      });
+
+  }
+  },1000);      
+}
+resetForm()
+{
+this.setState({
+  result:'Covid Result',
+  patientname:'',
+  sbmtvalidate:false,
+  isVisible: false,
+  chosenDateTime:"",
+  isTimeVisible: false,
+  chosenTime:"",
+  textresult:"",
+});
+}
+  render() {
+    return ( 
+      <ScrollView >
+      
+     <View style={styles.box1}>
+       
+          <Image source={require('./images/19covid.jpg')} style= {styles.logoStyle}/>   
+        <Text style = {{fontSize:20,paddingTop:20}}> Patient Details </Text>
+
+        <View style={styles.textInput}>
+        {/* <Icon name="user-alt" size={20} color="#000" style={styles.iconresize}/> */}
+          <TextInput
+          
+          placeholder="Patient Name"
+          
+          placeholderTextColor={`#000000`}
+          maxLength={40}
+          onChangeText={patientname=>this.setState({patientname})}
+          value={this.state.patientname}
+          />
+          {/* <Icon name={icon} /> */}
+          
+        </View>
+
+
+
+        <DropDownPicker
+    items={[
+      {label: 'Covid Result' , value: 'Covid Result'},
+      {label: 'Positive' , value: 'Positive'},
+      {label: 'Negative' , value: 'Negative'},
+      {label: 'Cannot be determined' , value: 'Cannot be determined'}
+  ]}
+    defaultValue={this.state.result}
+    containerStyle={{height: 50,width:'70%',margin:17,}}
+    style={{backgroundColor: '#d3d3d3',borderWidth:1,borderColor:'#000000',
+    borderTopLeftRadius:25,borderTopRightRadius:25,borderBottomLeftRadius:25,
+    borderBottomRightRadius:25}}
+    itemStyle={{
+        justifyContent: 'flex-start'
+    }}
+    dropDownStyle={{backgroundColor: '#d3d3d3'}}
+    onChangeItem={item => this.setState({
+        result: item.value
+    })}
+/>
+
+    
+<View style={[styles.textInput]}>
+{/* <Icon name="user-alt" size={20} color="#000" style={styles.iconresize}/>  */}
+  <TouchableOpacity onPress={this.showPicker}>
+<Text style={styles.touchdatetimetext}>   Test Date    {this.state.chosenDateTime}</Text>
+</TouchableOpacity >
+<DateTimePicker
+ 
+isVisible={this.state.isVisible}
+onConfirm={this.handlePicker}
+onCancel={this.hidePicker}
+mode='date'
+maximumDate={new Date()}
+minimumDate={new Date(2020, 1, 1)}
+/>
+</View>
+
+<View style={[styles.textInput]}>
+{/* <Icon name="user-alt" size={20} color="#000" style={styles.iconresize}/>  */}
+  <TouchableOpacity onPress={this.showTimePicker}> 
+<Text style={styles.touchdatetimetext}>   Test Time   {this.state.chosenTime} </Text>
+</TouchableOpacity >
+<DateTimePicker
+
+isVisible={this.state.isTimeVisible}
+onConfirm={this.handleTimePicker}
+onCancel={this.hideTimePicker}
+mode='time'
+/>
+</View>
+ 
+
+   <View  style={styles.touchOpBtnViewStyle}>
+     <TouchableOpacity onPress={this.onclick.bind(this)}>
+       <Text  style={styles.sbmtbtn}>   SUBMIT   </Text>
+     </TouchableOpacity>
+   </View> 
+
+</View> 
+    </ScrollView> 
+ );
+  }
+  }
+  
+const styles = StyleSheet.create({
+  box1:{
+    alignItems:"center",
+     flex:1,
+     backgroundColor:`#f5f5f5`,margin:0,
+     marginBottom:0,paddingBottom:16,
+  },
+sbmtbtn:{
+color:"#ffff",
+fontSize:18
+},
+
+
+  textInput:{
+    height:50,
+    width:'70%',
+    alignSelf:'center',  
+    borderColor:'#000000',
+    borderWidth:1,
+    margin:12,
+    paddingLeft:10,paddingBottom:0,
+    backgroundColor: '#d3d3d3',
+    borderRadius:25,
+  },
+
+touchdatetimetext:{
+  paddingTop:14,
+  paddingBottom:10,paddingLeft:0,
+},
+
+touchOpBtnViewStyle:{
+  marginTop:56,
+  paddingTop:14,
+  paddingBottom:14,
+  padding:10,
+  borderRadius:68, 
+  fontWeight: "bold",
+  paddingVertical:60,
+  paddingHorizontal:12,
+  backgroundColor:'#87cefa',
+  borderWidth:0,
+},
+dropdownStyle:{
+  width:'70%',
+  height:65,
+  borderTopLeftRadius: 25,
+  borderTopRightRadius: 25,
+  borderBottomLeftRadius: 25,
+  borderBottomRightRadius: 25,
+  borderWidth:1,
+  borderColor:'#e6e6fa',
+  margin:12,borderRadius:5,
+  fontWeight: "bold",
+  backgroundColor: '#778899'
+},
+touchOpDateTime:{
+  width:'10%',
+  height:65,
+  alignSelf:'center',
+  borderWidth:1,
+  borderColor:'#696969',
+  margin:12,
+  borderRadius:25,
+  backgroundColor: '#696969',
+  padding:10,fontWeight: "bold"
+},
+logoStyle:{
+  width:500,
+  height:250, 
+  resizeMode: "cover",
+  alignContent:"center",
+  padding:2,
+  paddingVertical:22,
+  paddingHorizontal:85
+}
+});
+export default Homescreen;
+
+
+
+
+
+
+                       #Second Screen
+
+
+
+
+import React ,{Component} from 'react';
+import { Text, View,StyleSheet,ScrollView} from 'react-native';
+
+
+export default class secondscreen extends Component
+{
+  render()
+  {
+
+const patient_name = this.props.route.params.patient
+const test_result = this.props.route.params.testresult
+const f_result = this.props.route.params.txtresult
+const rendered_dateTime = this.props.route.params.dateTime
+const rendered_Time = this.props.route.params.Time
+     return(
+    
+      <ScrollView style={styles.main}>
+      <View style={styles.container}>
+       <View style={{alignItems:'center',alignSelf:'center',marginBottom:20}}>
+        <Text style={{fontWeight: "bold",fontFamily: "Cochin",fontSize:30, color:`#00008b` }}> Covid-19 Test Report </Text>
+        </View>
+
+
+     
+
+      <View style={[styles.childViewStyle,]}>
+          <View style={styles.childStyle}>
+             <Text style={styles.textStatic}>   Patient Name   :   </Text>
+           </View>
+          <View style={styles.childStyle}>
+            <Text style={styles.textDynamic}>{patient_name}</Text>
+          </View>
+
+          <View style={[styles.childStyle]}>
+              <Text style={styles.textStatic}> Covid 19 Result :  </Text>
+           </View>
+           <View style={[styles.childStyle]}>
+              <Text style={styles.textDynamic}>{test_result}</Text>
+           </View>
+       </View>
+
+       <View >
+        <Text style={styles.correspondText}>{f_result}</Text>
+     </View>
+
+     <View style={[styles.childViewStyle]}>
+        <View style={[styles.childStyle,]}>
+          <Text style={styles.textStatic}> Test Date          :</Text>
+        </View>
+        <View style={styles.childStyle}>
+           <Text style={styles.textDynamic}> {rendered_dateTime} </Text>
+        </View>
+     </View>
+
+     <View style={[styles.childViewStyle]}>
+        <View style={[styles.childStyle,]}>
+          <Text style={styles.textStatic}> Test Time         :</Text>
+        </View>
+        <View style={styles.childStyle}>
+           <Text style={styles.textDynamic}> {rendered_Time} </Text>
+        </View>
+     </View>
+    
+        
+</View>
+</ScrollView> 
+);
+  }
+   } 
+const styles= StyleSheet.create({
+
+main:{
+  flex:1,
+backgroundColor:'#f5f5f5',
+paddingTop:10
+
+}, 
+container:{
+alignItems:'center'
+},
+childViewStyle: {
+flexWrap: 'wrap',
+flexDirection: 'row',
+justifyContent:'center',
+paddingLeft:'0%',
+paddingRight:'2%'
+},
+childStyle: {
+width: '50%',
+marginBottom:20,
+
+},
+textStatic:{
+fontWeight: 'bold',
+fontFamily: 'Cochin',
+fontSize:22,
+alignSelf:'center',
+marginBottom:0,
+color:'black',
+
+},
+textDynamic:{
+fontWeight: 'bold',
+fontFamily: 'Cochin',
+fontSize:22,
+color:'#000080'
+},
+correspondText:{
+marginBottom:10,
+alignSelf:'center',
+fontWeight: 'bold',
+fontFamily: 'Cochin',
+fontSize:22,
+color:'#000080',
+
+}
+})
+
+
+
+
+         #Page-6  Package.json
+
+
+
+
+
+{
+  "name": "covid",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@react-native-community/datetimepicker": "^3.4.3",
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-picker/picker": "^1.12.0",
+    "@react-navigation/native": "^5.9.3",
+    "@react-navigation/stack": "^5.14.3",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "react": "17.0.1",
+    "react-moment": "^1.1.1",
+    "react-native": "0.64.0",
+    "react-native-dropdown-picker": "^4.0.2",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-html-to-pdf": "^0.9.1",
+    "react-native-image-slider": "^2.0.3",
+    "react-native-modal-datetime-picker": "^9.2.0",
+    "react-native-print": "^0.7.0",
+    "react-native-reanimated": "^2.0.1",
+    "react-native-safe-area-context": "^3.2.0",
+    "react-native-screens": "^2.18.1",
+    "react-native-vector-icons": "^8.1.0",
+    "react-scroll-paged-view": "^2.2.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "7.14.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.64.0",
+    "react-test-renderer": "17.0.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
+
